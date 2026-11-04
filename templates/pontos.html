@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pontos | Guia Turístico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <main>
+        <h1>Meus Pontos Turísticos</h1>
+        <p>Aqui você poderá cadastrar e acompanhar seus pontos turísticos.</p>
+
+        <h2>Cadastrar novo ponto turístico</h2>
+
+        <form id="form-ponto">
+            <label for="nome">Nome do local</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" name="descricao" required></textarea>
+
+            <label for="estado-ponto">Estado</label>
+            <select id="estado-ponto" name="uf" required>
+                <option value="">Selecione um estado</option>
+            </select>
+
+            <label for="cidade-ponto">Cidade</label>
+            <select id="cidade-ponto" name="codigo_ibge" required disabled>
+                <option value="">Selecione uma cidade</option>
+            </select>
+
+            <button type="submit">Enviar para aprovação</button>
+        </form>
+
+        <a href="/">Voltar ao início</a>
+    </main>
+    
+    <script src="{{ url_for('static', filename='js/pontos.js') }}"></script>
+</body>
+
+</html>

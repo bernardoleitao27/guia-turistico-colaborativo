@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Turístico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/leaflet.css') }}">
+
+</head>
+
+<body>
+
+    <header>
+        <h2>Guia Turístico</h2>
+        <nav>
+            <a href="/">Início</a>
+            {% if logado %}
+            <a href="{{ url_for('meus_pontos') }}">Meus Pontos</a>
+            <form action="/sair" method="POST">
+                <button type="submit">Sair</button>
+            </form>
+            {% else %}
+            <a href="/login" class="botao__entrar">Entrar</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <h1>Guia Turístico</h1>
+    <p>Descubra os melhores pontos turísticos do Brasil!</p>
+
+    <section class="pesquisa">
+        <h2>Explore o Brasil</h2>
+        <p>Escolha um estado e uma cidade para descobrir lugares incríveis!</p>
+
+        <div class="filtros">
+            <div>
+                <label for="estado">Estado</label>
+                <select id="estado">
+                    <option value="">Selecione o estado</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="cidade">Cidade</label>
+                <select id="cidade" disabled>
+                    <option value="">Selecione a cidade</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="button" class="botao__buscar">
+            Buscar pontos turísticos
+        </button>
+    </section>
+
+    <section class="mapa">
+        <h2>Explore o mapa</h2>
+        <p>Encontre pontos turísticos em todo o Brasil!</p>
+
+        <div id="mapa"></div>
+    </section>
+
+    <section class="pontos">
+        <h2>Pontos turísticos</h2>
+
+        <div class="lista__pontos">
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='img/jardim.jpg') }}" alt="Jardim Botânico">
+
+                <h3>Jardim Botânico de Bauru</h3>
+                <p>Bauru, SP</p>
+                <p>☆ Sem avaliações</p>
+
+                <button type="button">Ver detalhes</button>
+            </div>
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='img/parque.jpg') }}" alt="Parque Vitória Régia">
+
+                <h3>Parque Vitória Régia</h3>
+                <p>Bauru, SP</p>
+                <p>☆ Sem avaliações</p>
+
+                <button type="button">Ver detalhes</button>
+            </div>
+        </div>
+
+    </section>
+
+
+
+
+
+
+
+    <script src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+
+</body>
+
+</html>
