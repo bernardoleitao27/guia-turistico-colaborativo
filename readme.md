@@ -1,56 +1,70 @@
 # 🌎 Guia Turístico Colaborativo
 
-Projeto desenvolvido durante o curso Técnico em Desenvolvimento de Sistemas do SENAI.
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![Status](https://img.shields.io/badge/Status-Em%20desenvolvimento-yellow?style=flat-square)
 
 ## 📌 Sobre o projeto
 
-O Guia Turístico Colaborativo é uma aplicação web que permite aos usuários descobrir, cadastrar e futuramente avaliar pontos turísticos de diferentes cidades brasileiras.
+Aplicação web **Full Stack**, desenvolvida durante o curso Técnico em Desenvolvimento de Sistemas do SENAI, com o objetivo de criar uma plataforma colaborativa para descoberta, cadastro e avaliação de pontos turísticos brasileiros.
 
-O sistema conta com autenticação de usuários e um painel administrativo para controlar a publicação dos pontos turísticos.
+O projeto integra backend em Python, banco de dados MySQL, autenticação de usuários, APIs externas e mapas interativos.
 
-## 🛠️ Tecnologias utilizadas
+## 🛠️ Tecnologias
 
-- Python e Flask — Backend
-- MySQL (Aiven) — Banco de dados
-- HTML5 e CSS3 — Estrutura e estilo
-- JavaScript — Interatividade
-- Leaflet e OpenStreetMap — Mapas
-- API do IBGE — Estados e municípios
-- Git e GitHub — Versionamento
+- **Backend:** Python, Flask, PyMySQL
+- **Frontend:** HTML5, CSS3, JavaScript
+- **Banco de dados:** MySQL (Aiven)
+- **Integrações:** Leaflet, OpenStreetMap e API do IBGE
+- **Ferramentas:** Git, GitHub e DBeaver
 
-## ✅ Funcionalidades implementadas
+## ⚙️ Funcionalidades
 
-- Cadastro de usuários com senhas protegidas por hash
-- Login e logout
-- Sessões e controle de acesso
-- Perfis de usuário e administrador
-- Conexão com banco MySQL
-- Formulário inicial de pontos turísticos
-- Seleção de estados e cidades pela API do IBGE
-- Mapa interativo na página inicial
+**Implementadas:**
+- Cadastro e autenticação de usuários com hash de senhas.
+- Login, logout e gerenciamento de sessões.
+- Controle de acesso por perfis (`usuario` e `admin`).
+- Integração Flask + MySQL com conexão SSL.
+- Mapa interativo utilizando Leaflet.
+- Seleção dinâmica de estados e municípios via API do IBGE.
 
-## 🚧 Funcionalidades em desenvolvimento
+**Em desenvolvimento:**
+- Cadastro completo de pontos turísticos com imagens.
+- Aprovação de locais pelo administrador.
+- Avaliações, comentários e filtros de busca.
+- Documentação Swagger e deploy no Render.
 
-- Cadastro completo de pontos turísticos
-- Seleção de coordenadas no formulário
-- Envio de imagens
-- Aprovação e rejeição pelo administrador
-- Avaliação de locais com estrelas
-- Filtros e busca de pontos turísticos
-- Documentação da API com Swagger
-- Publicação da aplicação
+## 🗄️ Banco de dados
 
-## ▶️ Como executar
+Modelagem relacional com cinco tabelas: `usuarios`, `pontos_turisticos`, `avaliacoes`, `categorias` e `ponto_categoria`.
 
-1. Clone o repositório.
-2. Instale as dependências Python do projeto.
-3. Configure o arquivo `.env` com suas próprias credenciais do MySQL e uma chave secreta.
-4. Configure o certificado SSL do servidor.
-5. Execute `python app.py`.
-6. Acesse `http://127.0.0.1:5000`.
+Utilização de chaves primárias, estrangeiras, relacionamentos 1:N e N:N e consultas SQL parametrizadas.
+
+## 🚀 Executando localmente
+
+```bash
+git clone https://github.com/bernardoleitao27/guia-turistico-colaborativo.git
+cd guia-turistico-colaborativo
+python -m pip install flask pymysql python-dotenv
+```
+
+Configure as variáveis de ambiente no `.env`, o banco MySQL e seu certificado SSL (`ca.pem`).
+
+Depois execute:
+
+```bash
+python app.py
+```
+
+Acesse `http://127.0.0.1:5000`.
+
+> Projeto em desenvolvimento. Algumas funcionalidades ainda não estão disponíveis.
 
 ## 👨‍💻 Desenvolvedor
 
-**Bernardo Leitão**
+**Bernardo Messias da Silva Leitão**  
+Técnico em Desenvolvimento de Sistemas — SENAI SP (em formação)
 
-Estudante de Desenvolvimento de Sistemas — SENAI.
+[GitHub](https://github.com/bernardoleitao27)
