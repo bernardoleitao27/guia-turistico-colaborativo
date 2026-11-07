@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Pontos | Guia Turístico</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/leaflet.css') }}">
 </head>
 
 <body>
@@ -15,7 +16,7 @@
 
         <h2>Cadastrar novo ponto turístico</h2>
 
-        <form id="form-ponto">
+        <form id="form-ponto" action="{{ url_for('cadastrar_ponto') }}" method="POST">
             <label for="nome">Nome do local</label>
             <input type="text" id="nome" name="nome" required>
 
@@ -32,12 +33,29 @@
                 <option value="">Selecione uma cidade</option>
             </select>
 
+            <input type="hidden" id="nome-cidade" name="cidade">
+
+            <label>Localização do ponto turístico</label>
+            <p>Clique no mapa para selecionar o local.</p>
+
+            <div id="mapa-ponto"></div>
+
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+
+            <p id="coordenadas">
+                Nenhuma localização selecionada.
+            </p>
+
             <button type="submit">Enviar para aprovação</button>
         </form>
 
         <a href="/">Voltar ao início</a>
     </main>
-    
+
+
+
+    <script src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
     <script src="{{ url_for('static', filename='js/pontos.js') }}"></script>
 </body>
 

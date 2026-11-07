@@ -10,6 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ["SECRET_KEY"]
 
+
 def conectar_banco():
     contexto_ssl = ssl.create_default_context(cafile="ca.pem")
     return pymysql.connect(
@@ -24,14 +25,16 @@ def conectar_banco():
 
 @app.route('/')
 def inicio():
-        return render_template(
+    return render_template(
         "inicio.html",
         logado="usuario_id" in session
     )
 
+
 @app.route("/login")
 def login():
     return render_template("login.html")
+
 
 @app.route("/teste-banco")
 def teste_banco():
@@ -43,6 +46,7 @@ def teste_banco():
         return f"Conexão funcionando! Resultado: {resultado[0]}"
     finally:
         conexao.close()
+
 
 @app.route("/teste-usuarios")
 def teste_usuarios():
@@ -58,6 +62,7 @@ def teste_usuarios():
     finally:
         conexao.close()
 
+
 @app.route("/cadastro", methods=["POST"])
 def cadastrar_usuario():
     nome = request.form.get("nome", "").strip()
@@ -66,7 +71,7 @@ def cadastrar_usuario():
 
     if not nome or not email or len(senha) < 8:
         return "Preencha os campos corretamente.", 400
-    
+
         email = email.lower()
     senha_protegida = generate_password_hash(senha)
 
@@ -88,6 +93,7 @@ def cadastrar_usuario():
 
     finally:
         conexao.close()
+
 
 @app.route("/entrar", methods=["POST"])
 def entrar():
@@ -115,10 +121,12 @@ def entrar():
 
     return redirect(url_for("inicio"))
 
+
 @app.route("/sair", methods=["POST"])
 def sair():
     session.clear()
     return redirect(url_for("inicio"))
+
 
 @app.route("/pontos")
 def meus_pontos():
@@ -126,6 +134,7 @@ def meus_pontos():
         return redirect(url_for("login"))
 
     return render_template("pontos.html")
+
 
 @app.route("/admin")
 def painel_admin():
@@ -137,12 +146,32 @@ def painel_admin():
 
     return render_template("admin.html")
 
+
+@app.route("/cadastrar-ponto", methods=["POST"])
+def cadastrar_ponto():
+    if "usuario_id" not in session:
+        return redirect(url_for("login"))
+
+    nome = request.form.get("nome", "").strip()
+    descricao = request.form.get("descricao", "").strip()
+    uf = request.form.get("uf", "")
+    codigo_ibge = request.form.get("codigo_ibge", "")
+
+    cidade = request.form.get("cidade", "").strip()
+
+    latitude = request.form.get("latitude", "")
+    longitude = request.form.get("longitude", "")
+
+    print("Nome preenchido:", bool(nome))
+    print("Descrição preenchida:", bool(descricao))
+    print("Estado preenchido:", bool(uf))
+    print("Cidade preenchida:", bool(cidade))
+    print("Código IBGE preenchido:", bool(codigo_ibge))
+    print("Latitude preenchida:", bool(latitude))
+    print("Longitude preenchida:", bool(longitude))
+
+    return "Dados do ponto turístico recebidos com sucesso!"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
-
-
-
