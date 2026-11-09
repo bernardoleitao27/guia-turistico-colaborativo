@@ -64,11 +64,9 @@ mapaPonto.on("click", (evento) => {
     `Latitude: ${latitude.toFixed(6)} | Longitude: ${longitude.toFixed(6)}`;
 });
 
-cidadePonto.addEventListener("change", () => {
-    const cidadeSelecionada = cidadePonto.options[cidadePonto.selectedIndex];
+cidadePonto.addEventListener("change", function () {
+    const nomeCidade = cidadePonto.options[cidadePonto.selectedIndex].text;
 
-    document.getElementById("nome-cidade").value = cidadePonto.value
-        ? cidadeSelecionada.text
-        : "";
+    document.getElementById("nome-cidade").value = nomeCidade;
 });
 

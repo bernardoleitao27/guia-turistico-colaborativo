@@ -1,17 +1,54 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administração | Guia Turístico</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
     <main>
         <h1>Painel do Administrador</h1>
         <p>Aqui você poderá aprovar ou rejeitar pontos turísticos.</p>
 
+        <h2>Pontos aguardando aprovação</h2>
+
+        {% for ponto in pontos %}
+        <div class="card-pendente">
+            <h3>{{ ponto.nome }}</h3>
+
+            <p>{{ ponto.descricao }}</p>
+
+            <p>
+                <strong>Localização:</strong>
+                {{ ponto.cidade }} - {{ ponto.uf }}
+            </p>
+
+            <div class="acoes-admin">
+
+                <form action="{{ url_for('aprovar_ponto', ponto_id=ponto.id) }}" method="POST">
+                    <button type="submit" class="btn-aprovar">Aprovar</button>
+                </form>
+
+                <form action="{{ url_for('rejeitar_ponto', ponto_id=ponto.id) }}" method="POST">
+                    <button type="submit" class="btn-rejeitar">Rejeitar</button>
+                </form>
+
+            </div>
+
+
+
+
+
+        </div>
+        {% else %}
+        <p>Nenhum ponto turístico aguardando aprovação.</p>
+        {% endfor %}
+
         <a href="/">Voltar ao início</a>
     </main>
 </body>
+
 </html>

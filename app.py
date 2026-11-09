@@ -4,6 +4,7 @@ import pymysql
 import ssl
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
+from decimal import Decimal, InvalidOperation
 
 load_dotenv()
 
@@ -144,7 +145,23 @@ def painel_admin():
     if session.get("perfil") != "admin":
         abort(403)
 
-    return render_template("admin.html")
+    conexao = conectar_banco()
+
+    try:
+        with conexao.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT id, nome, descricao, cidade, uf
+                FROM pontos_turisticos
+                WHERE status = %s
+                ORDER BY id DESC
+            """, ("pendente",))
+
+            pontos = cursor.fetchall()
+
+    finally:
+        conexao.close()
+
+    return render_template("admin.html", pontos=pontos)
 
 
 @app.route("/cadastrar-ponto", methods=["POST"])
@@ -162,15 +179,128 @@ def cadastrar_ponto():
     latitude = request.form.get("latitude", "")
     longitude = request.form.get("longitude", "")
 
-    print("Nome preenchido:", bool(nome))
-    print("Descrição preenchida:", bool(descricao))
-    print("Estado preenchido:", bool(uf))
-    print("Cidade preenchida:", bool(cidade))
-    print("Código IBGE preenchido:", bool(codigo_ibge))
-    print("Latitude preenchida:", bool(latitude))
-    print("Longitude preenchida:", bool(longitude))
+    if not all([nome, descricao, uf, cidade, codigo_ibge, latitude, longitude]):
+        return "Preencha todos os campos e selecione um local no mapa.", 400
 
-    return "Dados do ponto turístico recebidos com sucesso!"
+    try:
+        latitude = Decimal(latitude)
+        longitude = Decimal(longitude)
+        codigo_ibge = int(codigo_ibge)
+    except (InvalidOperation, ValueError, TypeError):
+        return "Coordenadas ou código IBGE inválidos.", 400
+
+    if not (latitude.is_finite() and longitude.is_finite()):
+        return "Coordenadas inválidas.", 400
+
+    if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+        return "Localização inválida.", 400
+
+    if len(nome) > 150 or len(cidade) > 150 or len(uf) != 2:
+        return "Nome, cidade ou estado inválido.", 400
+
+    if codigo_ibge <= 0:
+        return "Código IBGE inválido.", 400
+
+    conexao = conectar_banco()
+
+    try:
+        with conexao.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO pontos_turisticos
+                (usuario_id, nome, descricao, uf, cidade,
+                 codigo_ibge, latitude, longitude, status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """,
+                (
+                    session["usuario_id"],
+                    nome,
+                    descricao,
+                    uf,
+                    cidade,
+                    codigo_ibge,
+                    latitude,
+                    longitude,
+                    "pendente"
+                )
+            )
+
+        conexao.commit()
+        return "Ponto turístico enviado para aprovação!", 201
+
+    except Exception:
+        conexao.rollback()
+        app.logger.exception("Erro ao cadastrar ponto turístico")
+        return "Erro ao salvar o ponto turístico.", 500
+
+    finally:
+        conexao.close()
+
+@app.route("/admin/aprovar/<int:ponto_id>", methods=["POST"])
+def aprovar_ponto(ponto_id):
+    if "usuario_id" not in session:
+        return redirect(url_for("login"))
+
+    if session.get("perfil") != "admin":
+        abort(403)
+
+    conexao = conectar_banco()
+
+    try:
+        with conexao.cursor() as cursor:
+            cursor.execute(
+                """
+                UPDATE pontos_turisticos
+                SET status = %s
+                WHERE id = %s AND status = %s
+                """,
+                ("aprovado", ponto_id, "pendente")
+            )
+
+        conexao.commit()
+
+    except Exception:
+        conexao.rollback()
+        app.logger.exception("Erro ao aprovar ponto turístico")
+        return "Erro ao aprovar o ponto turístico.", 500
+
+    finally:
+        conexao.close()
+
+    return redirect(url_for("painel_admin"))
+
+@app.route("/admin/rejeitar/<int:ponto_id>", methods=["POST"])
+def rejeitar_ponto(ponto_id):
+    if "usuario_id" not in session:
+        return redirect(url_for("login"))
+
+    if session.get("perfil") != "admin":
+        abort(403)
+
+    conexao = conectar_banco()
+
+    try:
+        with conexao.cursor() as cursor:
+            cursor.execute(
+                """
+                UPDATE pontos_turisticos
+                SET status = %s
+                WHERE id = %s AND status = %s
+                """,
+                ("rejeitado", ponto_id, "pendente")
+            )
+
+        conexao.commit()
+
+    except Exception:
+        conexao.rollback()
+        app.logger.exception("Erro ao rejeitar ponto turístico")
+        return "Erro ao rejeitar o ponto turístico.", 500
+
+    finally:
+        conexao.close()
+
+    return redirect(url_for("painel_admin"))
 
 
 if __name__ == '__main__':
