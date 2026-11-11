@@ -282,3 +282,25 @@ nav button {
 .btn-rejeitar {
     background-color: #c0392b;
 }
+
+.lista__pontos .card {
+    padding: 20px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.lista__pontos .card h3 {
+    color: #23895A;
+    margin-bottom: 10px;
+}
+
+.lista__pontos .card p {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+
+
+
+

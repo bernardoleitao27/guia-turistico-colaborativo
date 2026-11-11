@@ -73,7 +73,8 @@ def cadastrar_usuario():
     if not nome or not email or len(senha) < 8:
         return "Preencha os campos corretamente.", 400
 
-        email = email.lower()
+    email = email.lower()
+    
     senha_protegida = generate_password_hash(senha)
 
     conexao = conectar_banco()
@@ -236,6 +237,7 @@ def cadastrar_ponto():
     finally:
         conexao.close()
 
+
 @app.route("/admin/aprovar/<int:ponto_id>", methods=["POST"])
 def aprovar_ponto(ponto_id):
     if "usuario_id" not in session:
@@ -269,6 +271,7 @@ def aprovar_ponto(ponto_id):
 
     return redirect(url_for("painel_admin"))
 
+
 @app.route("/admin/rejeitar/<int:ponto_id>", methods=["POST"])
 def rejeitar_ponto(ponto_id):
     if "usuario_id" not in session:
@@ -301,6 +304,27 @@ def rejeitar_ponto(ponto_id):
         conexao.close()
 
     return redirect(url_for("painel_admin"))
+
+
+@app.route("/api/pontos")
+def listar_pontos():
+    conexao = conectar_banco()
+
+    try:
+        with conexao.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT id, nome, descricao, cidade, uf,
+                        codigo_ibge, latitude, longitude
+                FROM pontos_turisticos
+                WHERE status = %s
+            """, ("aprovado",))
+
+            pontos = cursor.fetchall()
+
+    finally:
+        conexao.close()
+
+    return {"pontos": pontos}
 
 
 if __name__ == '__main__':
