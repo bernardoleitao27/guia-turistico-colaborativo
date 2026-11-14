@@ -19,8 +19,12 @@
             <a href="/">Início</a>
             {% if logado %}
             <a href="{{ url_for('meus_pontos') }}">Meus Pontos</a>
-            <form action="/sair" method="POST">
+            <form action="{{ url_for('sair') }}" method="POST">
+
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
                 <button type="submit">Sair</button>
+            
             </form>
             {% else %}
             <a href="/login" class="botao__entrar">Entrar</a>
@@ -48,6 +52,14 @@
                 <select id="cidade" disabled>
                     <option value="">Selecione a cidade</option>
                 </select>
+
+                <label for="ordenacao">Ordenar por:</label>
+
+                <select id="ordenacao">
+                    <option value="melhores">Melhores avaliações</option>
+                    <option value="piores">Menores avaliações</option>
+                    <option value="recentes">Mais recentes</option>
+                </select>
             </div>
         </div>
 
@@ -67,7 +79,7 @@
         <h2>Pontos turísticos</h2>
 
         <div class="lista__pontos" id="lista-pontos">
-            
+
         </div>
 
     </section>

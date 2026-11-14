@@ -91,6 +91,23 @@ fetch("/api/pontos")
             const card = document.createElement("div");
             card.className = "card";
 
+            const imagemCard = document.createElement("img");
+
+            imagemCard.src = ponto.foto
+                ? `/static/${ponto.foto}`
+                : "/static/img/sem-foto.png";
+            
+            imagemCard.alt = `Fotografia de ${ponto.nome}`;
+            imagemCard.className = "card-imagem";
+            imagemCard.loading = "lazy";
+            
+            imagemCard.onerror = function () {
+                imagemCard.onerror = null;
+                imagemCard.src = "/static/img/sem-foto.png";
+            };
+            
+            card.appendChild(imagemCard);
+
             const tituloCard = document.createElement("h3");
             tituloCard.textContent = ponto.nome;
 
@@ -103,6 +120,31 @@ fetch("/api/pontos")
             card.appendChild(tituloCard);
             card.appendChild(cidadeCard);
             card.appendChild(descricaoCard);
+
+            const avaliacaoCard = document.createElement("p");
+            avaliacaoCard.className = "card-avaliacao";
+
+            if (ponto.quantidade_avaliacoes > 0) {
+                avaliacaoCard.textContent =
+                    `★ ${Number(ponto.media).toFixed(1).replace(".", ",")} (${ponto.quantidade_avaliacoes} avaliações)`;
+            } else {
+                avaliacaoCard.textContent = "Ainda não avaliado";
+            }
+
+            card.appendChild(avaliacaoCard);
+
+            const linkDetalhes = document.createElement("a");
+
+            linkDetalhes.href = `/ponto/${ponto.id}`;
+            linkDetalhes.textContent = "Ver detalhes";
+            linkDetalhes.className = "btn-detalhes";
+
+            card.appendChild(linkDetalhes);
+
+
+
+
+
 
             listaPontos.appendChild(card);
 
@@ -149,7 +191,7 @@ fetch("/api/pontos")
                     "Marcador está no mapa:",
                     mapa.hasLayer(registro.marcador)
                 );
-                
+
                 console.log(
                     "Cartão está visível:",
                     registro.card.style.display !== "none"
@@ -159,6 +201,37 @@ fetch("/api/pontos")
 
             });
         }
+
+
+        const ordenacaoFiltro = document.getElementById("ordenacao");
+
+        function ordenarPontos() {
+            const tipo = ordenacaoFiltro.value;
+
+            registros.sort((a, b) => {
+                if (tipo === "melhores") {
+                    return Number(b.ponto.media || 0) - Number(a.ponto.media || 0);
+                }
+
+                if (tipo === "piores") {
+                    return Number(a.ponto.media || 0) - Number(b.ponto.media || 0);
+                }
+
+                if (tipo === "recentes") {
+                    return b.ponto.id - a.ponto.id;
+                }
+
+                return 0;
+            });
+
+            registros.forEach(registro => {
+                listaPontos.appendChild(registro.card);
+            });
+        }
+
+        ordenacaoFiltro.addEventListener("change", ordenarPontos);
+
+        ordenarPontos();
 
         estadoFiltro.addEventListener("change", filtrarPontos);
         cidadeFiltro.addEventListener("change", filtrarPontos);

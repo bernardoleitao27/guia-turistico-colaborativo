@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ ponto.nome }} | Guia Turístico</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <main class="detalhes-ponto">
+
+        <h1>{{ ponto.nome }}</h1>
+
+        {% if ponto.foto %}
+        {% set caminho_imagem = ponto.foto %}
+        {% else %}
+        {% set caminho_imagem = 'img/sem-foto.png' %}
+        {% endif %}
+
+        <img src="{{ url_for('static', filename=caminho_imagem) }}" alt="Fotografia de {{ ponto.nome }}"
+            class="detalhes-imagem" id="foto-ponto">
+
+        <p>{{ ponto.cidade }} - {{ ponto.uf }}</p>
+
+        <h2>Sobre o local</h2>
+
+        <p>{{ ponto.descricao }}</p>
+
+        {% if not logado %}
+
+        <p>Faça login para avaliar este ponto turístico.</p>
+        <a href="{{ url_for('login') }}">Entrar</a>
+
+        {% elif ja_avaliou %}
+
+        <p>Você já avaliou este ponto turístico. Obrigado pela contribuição!</p>
+
+        {% else %}
+
+
+
+        <h2>Avaliar este local</h2>
+
+        <form id="form-avaliacao" action="{{ url_for('salvar_avaliacao', ponto_id=ponto.id) }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <label for="estrelas">Sua nota
+            </label>
+
+            <select id="estrelas" name="estrelas" required>
+                <option value="">Selecione uma nota</option>
+                <option value="1">★ 1 estrela</option>
+                <option value="2">★★ 2 estrelas</option>
+                <option value="3">★★★ 3 estrelas</option>
+                <option value="4">★★★★ 4 estrelas</option>
+                <option value="5">★★★★★ 5 estrelas</option>
+            </select>
+
+            <label for="comentario">Comentário (opcional)</label>
+            <textarea id="comentario" name="comentario" placeholder="Conte sua experiência..."></textarea>
+
+            <button type="submit">Enviar avaliação</button>
+        </form>
+        {% endif %}
+
+        <section class="avaliacoes">
+
+            <h2>Avaliações dos visitantes</h2>
+
+            {% if quantidade > 0 %}
+
+            <div class="resumo-avaliacoes">
+
+                <h3>Avaliação geral</h3>
+
+                <div class="resumo-nota">
+                    {{ "%.1f"|format(media) }}
+                </div>
+
+                <div class="resumo-estrelas">
+                    {% set nota_arredondada = media|round(0, 'common')|int %}
+
+                    {% for i in range(1, 6) %}
+                    {% if i <= nota_arredondada %} ★ {% else %} ☆ {% endif %} {% endfor %} </div>
+
+                        <p>Baseado em {{ quantidade }} avaliações</p>
+
+                </div>
+
+                {% for avaliacao in avaliacoes %}
+
+                <div class="avaliacao-card">
+
+                    <h3>{{ avaliacao.nome }}</h3>
+
+                    <p class="estrelas">
+                        {{ "★" * avaliacao.estrelas }}
+                        {{ "☆" * (5 - avaliacao.estrelas) }}
+                    </p>
+
+                    {% if avaliacao.comentario %}
+                    <p>{{ avaliacao.comentario }}</p>
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+                {% else %}
+
+                <p>Este ponto turístico ainda não possui avaliações.</p>
+
+                {% endif %}
+
+        </section>
+
+
+
+        <a href="{{ url_for('inicio') }}">Voltar ao início</a>
+
+    </main>
+
+    <script>
+        const fotoPonto = document.getElementById("foto-ponto");
+    
+        fotoPonto.addEventListener("error", function () {
+            fotoPonto.src = "{{ url_for('static', filename='img/sem-foto.png') }}";
+            fotoPonto.onerror = null;
+        });
+    </script>
+
+</body>
+
+</html>

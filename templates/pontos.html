@@ -16,7 +16,10 @@
 
         <h2>Cadastrar novo ponto turístico</h2>
 
-        <form id="form-ponto" action="{{ url_for('cadastrar_ponto') }}" method="POST">
+        <form action="{{ url_for('cadastrar_ponto') }}" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            
             <label for="nome">Nome do local</label>
             <input type="text" id="nome" name="nome" required>
 
@@ -46,6 +49,21 @@
             <p id="coordenadas">
                 Nenhuma localização selecionada.
             </p>
+
+            <div class="campo-foto">
+
+                <label for="foto">Fotografia do ponto turístico</label>
+            
+                <input
+                    type="file"
+                    id="foto"
+                    name="foto"
+                    accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                >
+            
+                <small>Formatos permitidos: JPG, JPEG e PNG. Máximo de 5 MB.</small>
+            
+            </div>
 
             <button type="submit">Enviar para aprovação</button>
         </form>
